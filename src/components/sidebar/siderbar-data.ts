@@ -16,176 +16,140 @@ import {
   FaBell, // Notifications
   FaDesktop, // Display
   FaQuestionCircle, // Help Center
-  FaWrench, // Maintenance
-} from "react-icons/fa";
-import { MdError } from "react-icons/md";
-import { IoMdSettings } from "react-icons/io";
-import { HiOutlineKey } from "react-icons/hi";
-import { BsBuildingGear } from "react-icons/bs";
-import { SidebarData } from "./types";
+  FaWrench // Maintenance
+} from 'react-icons/fa'
+import { MdError } from 'react-icons/md'
+import { IoMdSettings } from 'react-icons/io'
+import { HiOutlineKey } from 'react-icons/hi'
+import { BsBuildingGear } from 'react-icons/bs'
+import { SidebarData } from './types'
 
 export const sidebarData: SidebarData = {
   user: {
-    name: "satnaing",
-    email: "satnaingdev@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: 'satnaing',
+    email: 'satnaingdev@gmail.com',
+    avatar: '/avatars/shadcn.jpg'
   },
   teams: [
     {
-      name: "Shadcn Admin",
+      name: 'Shadcn Admin',
       logo: FaTachometerAlt,
-      plan: "Vite + ShadcnUI",
+      plan: 'Vite + ShadcnUI'
     },
     {
-      name: "Acme Inc",
+      name: 'Acme Inc',
       logo: BsBuildingGear,
-      plan: "Enterprise",
+      plan: 'Enterprise'
     },
     {
-      name: "Acme Corp.",
+      name: 'Acme Corp.',
       logo: FaServer,
-      plan: "Startup",
-    },
+      plan: 'Startup'
+    }
   ],
   navGroups: [
     {
-      title: "General",
+      title: 'General',
       items: [
         {
-          title: "Dashboard",
-          url: "/",
-          icon: FaTachometerAlt,
-        },
-        {
-          title: "Tasks",
-          url: "/tasks",
-          icon: FaTasks,
-        },
-        {
-          title: "Apps",
-          url: "/apps",
-          icon: FaAppStore,
-        },
-        {
-          title: "Chats",
-          url: "/chats",
-          badge: "3",
-          icon: FaComments,
-        },
-        {
-          title: "Users",
-          url: "/users",
-          icon: FaUsers,
-        },
-      ],
+          title: 'Dashboard',
+          url: '/',
+          icon: FaTachometerAlt
+        }
+        // {
+        //   title: 'Inventory',
+        //   url: '/inventory',
+        //   icon: FaTasks
+        // },
+        // {
+        //   title: 'Apps',
+        //   url: '/apps',
+        //   icon: FaAppStore
+        // },
+        // {
+        //   title: 'Chats',
+        //   url: '/chats',
+        //   badge: '3',
+        //   icon: FaComments
+        // },
+        // {
+        //   title: 'Users',
+        //   url: '/users',
+        //   icon: FaUsers
+        // }
+      ]
     },
     {
-      title: "Pages",
+      title: 'Inventario',
       items: [
         {
-          title: "Auth",
+          title: 'Ítems',
+          url: '/inventory/items',
+          icon: FaTachometerAlt
+        },
+        {
+          title: 'Lotes',
+          url: '/inventory/batches',
+          icon: FaAppStore
+        },
+        {
+          title: 'Movimientos',
           icon: HiOutlineKey,
           items: [
             {
-              title: "Sign In",
-              url: "/sign-in",
-              icon: FaSignInAlt,
+              title: 'Entradas',
+              url: '/inventory/movements/receipts',
+              icon: FaSignInAlt
             },
             {
-              title: "Sign In (2 Col)",
-              url: "/sign-in-2",
-              icon: FaSignInAlt,
-            },
-            {
-              title: "Sign Up",
-              url: "/sign-up",
-              icon: FaSignInAlt,
-            },
-            {
-              title: "Forgot Password",
-              url: "/forgot-password",
-              icon: HiOutlineKey,
-            },
-            {
-              title: "OTP",
-              url: "/otp",
-              icon: HiOutlineKey,
-            },
-          ],
-        },
-        {
-          title: "Errors",
-          icon: FaBug,
-          items: [
-            {
-              title: "Unauthorized",
-              url: "/401",
-              icon: FaLock,
-            },
-            {
-              title: "Forbidden",
-              url: "/403",
-              icon: FaUserSlash,
-            },
-            {
-              title: "Not Found",
-              url: "/404",
-              icon: FaExclamationTriangle,
-            },
-            {
-              title: "Internal Server Error",
-              url: "/500",
-              icon: MdError,
-            },
-            {
-              title: "Maintenance Error",
-              url: "/503",
-              icon: FaWrench,
-            },
-          ],
-        },
-      ],
+              title: 'Salidas',
+              url: '/inventory/movements/issues',
+              icon: FaSignInAlt
+            }
+          ]
+        }
+      ]
     },
     {
-      title: "Other",
+      title: 'Other',
       items: [
         {
-          title: "Settings",
+          title: 'Settings',
           icon: IoMdSettings,
           items: [
             {
-              title: "Profile",
-              url: "/settings",
-              icon: FaUserCog,
+              title: 'Profile',
+              url: '/settings',
+              icon: FaUserCog
             },
             {
-              title: "Account",
-              url: "/settings/account",
-              icon: FaTools,
+              title: 'Account',
+              url: '/settings/account',
+              icon: FaTools
             },
             {
-              title: "Appearance",
-              url: "/settings/appearance",
-              icon: FaPalette,
+              title: 'Appearance',
+              url: '/settings/appearance',
+              icon: FaPalette
             },
             {
-              title: "Notifications",
-              url: "/settings/notifications",
-              icon: FaBell,
+              title: 'Notifications',
+              url: '/settings/notifications',
+              icon: FaBell
             },
             {
-              title: "Display",
-              url: "/settings/display",
-              icon: FaDesktop,
-            },
-          ],
+              title: 'Display',
+              url: '/settings/display',
+              icon: FaDesktop
+            }
+          ]
         },
         {
-          title: "Help Center",
-          url: "/help-center",
-          icon: FaQuestionCircle,
-        },
-      ],
-    },
-  ],
-};
+          title: 'Help Center',
+          url: '/help-center',
+          icon: FaQuestionCircle
+        }
+      ]
+    }
+  ]
+}

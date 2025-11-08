@@ -1,4 +1,4 @@
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,14 +6,19 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
-import { FaUserCircle } from "react-icons/fa";
-import Link from "next/link";
-import { TNavGroup } from "./types";
-import { routes } from "@/constants/app-routes";
-import { TbLogout2 } from "react-icons/tb";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar
+} from '@/components/ui/sidebar'
+import { FaUserCircle } from 'react-icons/fa'
+import Link from 'next/link'
+import { routes } from '@/constants/app-routes'
+import { TbLogout2 } from 'react-icons/tb'
+import { NavGroup } from './types'
 // import { logOut } from '@/services/auth.service'
 // import { capitalize } from '@/utils/capitalize'
 // import { rolesVerifying } from '@/utils/rolesVerifying'
@@ -23,14 +28,14 @@ export function NavProfile({
   name,
   email,
   items,
-  companyId,
+  companyId
 }: {
-  name: string;
-  email: string;
-  items: TNavGroup[];
-  companyId: string;
+  name: string
+  email: string
+  items: NavGroup[]
+  companyId: string
 }) {
-  const { isMobile, state: stateSidebar } = useSidebar();
+  const { isMobile, state: stateSidebar } = useSidebar()
   // const { dataUser } = useUserSessionStore()
 
   // Filtrar los ítems del menú según los roles del usuario
@@ -39,8 +44,8 @@ export function NavProfile({
     //   const userRoles = dataUser?.role ? [dataUser.role] : []
     //   return rolesVerifying(userRoles, item.roles)
     // }
-    return true; // Si no tiene roles definidos, se muestra por defecto
-  });
+    return true // Si no tiene roles definidos, se muestra por defecto
+  })
 
   return (
     <SidebarMenu>
@@ -50,8 +55,10 @@ export function NavProfile({
             <SidebarMenuButton
               size="lg"
               className={`data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground ${
-                stateSidebar === "collapsed" && "mx-auto ml-3 hover:bg-background"
-              } `}>
+                stateSidebar === 'collapsed' &&
+                'mx-auto ml-3 hover:bg-background'
+              } `}
+            >
               <div className="flex-shrink-0 self-center">
                 <FaUserCircle size={24} />
               </div>
@@ -67,9 +74,10 @@ export function NavProfile({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
-            sideOffset={4}>
+            sideOffset={4}
+          >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <div className="flex-shrink-0">
@@ -87,7 +95,9 @@ export function NavProfile({
             <DropdownMenuSeparator />
             {filteredItems.map((item) => (
               <DropdownMenuGroup key={item.title}>
-                <Link href={`${routes.private.COMPANY}/${companyId}${item.path!}`}>
+                <Link
+                  href={`${routes.private.COMPANY}/${companyId}${item.url!}`}
+                >
                   <DropdownMenuItem className="cursor-pointer">
                     {item.icon && <item.icon />}
                     {item.title}
@@ -96,7 +106,10 @@ export function NavProfile({
               </DropdownMenuGroup>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => console.log("salir")} className="cursor-pointer">
+            <DropdownMenuItem
+              onClick={() => console.log('salir')}
+              className="cursor-pointer"
+            >
               <TbLogout2 size={20} />
               Logout
             </DropdownMenuItem>
@@ -104,5 +117,5 @@ export function NavProfile({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }
