@@ -1,8 +1,6 @@
 import React from 'react'
 
-interface SVGComponentProps extends React.SVGProps<SVGSVGElement> {}
-
-const InxayLogo = ({ className, ...props }: SVGComponentProps) => (
+const InxayLogo = ({ className, ...props }: React.SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 500.000000 500.000000"
     preserveAspectRatio="xMidYMid meet"
