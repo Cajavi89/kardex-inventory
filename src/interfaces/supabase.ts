@@ -102,6 +102,75 @@ export type Database = {
         }
         Relationships: []
       }
+      issue_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          issue_id: string | null
+          item_id: string | null
+          quantity: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          issue_id?: string | null
+          item_id?: string | null
+          quantity: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          issue_id?: string | null
+          item_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_items_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "issue_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      issues: {
+        Row: {
+          created_at: string | null
+          id: string
+          issue_code: string
+          issue_date: string
+          reason: string | null
+          reference: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          issue_code: string
+          issue_date?: string
+          reason?: string | null
+          reference?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          issue_code?: string
+          issue_date?: string
+          reason?: string | null
+          reference?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       item_batches: {
         Row: {
           active: boolean | null
@@ -276,6 +345,130 @@ export type Database = {
           id?: string
           status?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      receipt_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          item_id: string | null
+          lot_code: string | null
+          quantity: number
+          receipt_id: string | null
+          unit_cost: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          item_id?: string | null
+          lot_code?: string | null
+          quantity: number
+          receipt_id?: string | null
+          unit_cost: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          item_id?: string | null
+          lot_code?: string | null
+          quantity?: number
+          receipt_id?: string | null
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_items_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receipts: {
+        Row: {
+          created_at: string | null
+          discount: number | null
+          id: string
+          receipt_code: string
+          receipt_date: string
+          reference_document: string | null
+          status: string | null
+          subtotal: number
+          supplier_id: string | null
+          tax: number
+          total: number | null
+          transport: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          discount?: number | null
+          id?: string
+          receipt_code: string
+          receipt_date?: string
+          reference_document?: string | null
+          status?: string | null
+          subtotal?: number
+          supplier_id?: string | null
+          tax?: number
+          total?: number | null
+          transport?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          discount?: number | null
+          id?: string
+          receipt_code?: string
+          receipt_date?: string
+          reference_document?: string | null
+          status?: string | null
+          subtotal?: number
+          supplier_id?: string | null
+          tax?: number
+          total?: number | null
+          transport?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          active: boolean | null
+          address: string | null
+          contact_name: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          address?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
         }
         Relationships: []
       }

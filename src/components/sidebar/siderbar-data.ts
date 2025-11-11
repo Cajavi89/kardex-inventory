@@ -16,7 +16,8 @@ import {
   FaBell, // Notifications
   FaDesktop, // Display
   FaQuestionCircle, // Help Center
-  FaWrench // Maintenance
+  FaWrench, // Maintenance,
+  FaTruck // Suppliers
 } from 'react-icons/fa'
 import { MdError } from 'react-icons/md'
 import { IoMdSettings } from 'react-icons/io'
@@ -55,6 +56,11 @@ export const sidebarData: SidebarData = {
           title: 'Dashboard',
           url: '/',
           icon: FaTachometerAlt
+        },
+        {
+          title: 'Proveedores',
+          url: '/suppliers',
+          icon: FaTruck
         }
         // {
         //   title: 'Inventory',
