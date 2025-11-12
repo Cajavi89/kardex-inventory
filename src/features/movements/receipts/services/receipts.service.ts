@@ -2,6 +2,7 @@
 
 import { createSupabaseClientSR } from '@/utils/supabase/server'
 import { IReceipt, IStatus } from '../interfaces/receipts'
+import { Tables } from '@/interfaces/supabase'
 
 export async function getAllReceipts(): Promise<IReceipt[]> {
   const supabase = await createSupabaseClientSR()
@@ -32,4 +33,22 @@ export async function getAllReceipts(): Promise<IReceipt[]> {
     status: (receipt.status as IStatus) ?? 'borrador',
     created_at: receipt.created_at ?? ''
   }))
+}
+
+export async function getReceiptById({
+  receiptId
+}: {
+  receiptId: string
+}): Promise<Tables<'receipts'>[]> {
+  const supabase = await createSupabaseClientSR()
+  const { data, error } = await supabase
+    .from('receipts')
+    .select('*')
+    .eq('id', receiptId)
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data
 }
