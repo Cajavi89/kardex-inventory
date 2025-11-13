@@ -14,3 +14,10 @@ export interface IReceipt {
   status: IStatus // estado del recibo
   created_at: string // timestamp ISO (ej: 2025-11-10T22:15:00Z)
 }
+
+export interface IReceiptDetail extends IReceipt {
+  subtotal: number // suma de ítems sin impuestos
+  tax: number // IVA u otros impuestos
+  transport: number | null // transporte, fletes opcionales
+  discount: number | null // descuentos opcionales
+}

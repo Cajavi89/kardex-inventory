@@ -1,8 +1,8 @@
 'use server'
 
 import { createSupabaseClientSR } from '@/utils/supabase/server'
-import { IReceipt, IStatus } from '../interfaces/receipts'
-import { Tables } from '@/interfaces/supabase'
+import { IReceipt, IReceiptDetail, IStatus } from '../interfaces/receipts'
+// import { Tables } from '@/interfaces/supabase'
 
 export async function getAllReceipts(): Promise<IReceipt[]> {
   const supabase = await createSupabaseClientSR()
@@ -39,16 +39,40 @@ export async function getReceiptById({
   receiptId
 }: {
   receiptId: string
-}): Promise<Tables<'receipts'>[]> {
+}): Promise<IReceiptDetail[]> {
   const supabase = await createSupabaseClientSR()
   const { data, error } = await supabase
     .from('receipts')
-    .select('*')
+    .select(
+      `
+        id,
+        supplier_id:suppliers (
+            name
+        ),
+        receipt_code,
+        receipt_date,
+        reference_document,
+        total,
+        status,
+        created_at,
+        subtotal,
+        tax,
+        transport,
+        discount,
+        created_at
+      `
+    )
     .eq('id', receiptId)
 
   if (error) {
     throw new Error(error.message)
   }
 
-  return data
+  return data.map(({ total, status, created_at, ...receipt }) => ({
+    ...receipt,
+    total: total ?? 0,
+    status: (status as IStatus) ?? 'draft',
+    created_at: created_at ?? '',
+    supplier_name: receipt.supplier_id?.name ?? null
+  }))
 }

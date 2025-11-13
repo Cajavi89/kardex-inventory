@@ -22,14 +22,12 @@
   --color-input: hsl(220 11% 85%);
   --color-ring: hsl(0 0% 83.1%);
 
-  /* Charts */
   --color-chart-1: hsl(220 70% 50%);
   --color-chart-2: hsl(160 60% 45%);
   --color-chart-3: hsl(30 80% 55%);
   --color-chart-4: hsl(280 65% 60%);
   --color-chart-5: hsl(340 75% 55%);
 
-  /* Sidebar */
   --color-sidebar-background: hsl(0 0% 100%);
   --color-sidebar-foreground: hsl(240 5.3% 26.1%);
   --color-sidebar-primary: hsl(240 5.9% 10%);
@@ -39,11 +37,103 @@
   --color-sidebar-border: hsl(220 11% 85%);
   --color-sidebar-ring: hsl(217.2 91.2% 59.8%);
 
-  /* Radius */
   --radius: 0.5rem;
+
+  /* Animaciones para Sheet */
+  --animate-in: fade-in 0.2s ease-out;
+  --animate-out: fade-out 0.2s ease-in;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-in-from-right {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-to-right {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes slide-in-from-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-to-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes slide-in-from-top {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-to-top {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
+  @keyframes slide-in-from-bottom {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-out-to-bottom {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(100%);
+    }
+  }
 }
 
-/* Root variables (puedes omitir esto si ya usas las --color- en tailwind.config.ts) */
 :root {
   --background: var(--color-background);
   --foreground: var(--color-foreground);
@@ -63,7 +153,6 @@
   --input: var(--color-input);
   --ring: var(--color-ring);
 
-  /* Sidebar mirror */
   --sidebar-background: var(--color-sidebar-background);
   --sidebar-foreground: var(--color-sidebar-foreground);
   --sidebar-primary: var(--color-sidebar-primary);
@@ -88,7 +177,7 @@ body {
     sans-serif;
 }
 
-/* HTML: <div class="loader"></div> */
+/* Loader */
 .loader {
   width: 40px;
   height: 40px;
@@ -97,6 +186,7 @@ body {
   background-size: 15px 15px;
   animation: l5 1.5s infinite cubic-bezier(0.3, 1, 0, 1);
 }
+
 @keyframes l5 {
   0% {
     background-position: 0 0, 100% 0, 100% 100%, 0 100%;
@@ -115,21 +205,19 @@ body {
     background-position: 100% 0, 100% 100%, 0 100%, 0 0;
   }
 }
+
 h1 {
   font-size: 2rem;
   font-weight: bold;
 }
-
 h2 {
   font-size: 1.75rem;
   font-weight: bold;
 }
-
 h3 {
   font-size: 1.5rem;
   font-weight: bold;
 }
-
 h4,
 h5,
 h6 {
@@ -137,30 +225,10 @@ h6 {
   font-weight: bold;
 }
 
-/* ul,
-ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-li {
-  margin-bottom: 0.5rem;
-  line-height: 1.5;
-}
-
-ul {
-  list-style-type: disc;
-}
-
-ol {
-  list-style-type: decimal;
-} */
-
-/* En tu archivo global.css */
 .dnd-floating-item {
   z-index: 1000;
   transition: transform 50ms ease;
-  will-change: transform; /* Aceleración por hardware */
+  will-change: transform;
   cursor: grabbing;
   user-select: none;
 }
@@ -175,8 +243,8 @@ ol {
   float: left;
   height: 0;
   pointer-events: none;
-  font-size: 15px !important /* 16px */;
-  line-height: 24px !important /* 24px */;
+  font-size: 15px !important;
+  line-height: 24px !important;
 }
 
 .editor a {
@@ -184,13 +252,15 @@ ol {
   text-decoration: underline;
 }
 
-/* styles.css */
+/* Collapsible animations */
 .CollapsibleContent {
   overflow: hidden;
 }
+
 .CollapsibleContent[data-state='open'] {
   animation: slideDown 300ms ease-out;
 }
+
 .CollapsibleContent[data-state='closed'] {
   animation: slideUp 300ms ease-out;
 }
@@ -211,4 +281,52 @@ ol {
   to {
     height: 0;
   }
+}
+
+/* Sheet animations - CRITICAL */
+
+/* OVERLAY (fondo oscuro) - fade */
+[data-slot='sheet-overlay'][data-state='open'] {
+  animation: fade-in 0.2s ease-out;
+}
+
+[data-slot='sheet-overlay'][data-state='closed'] {
+  animation: fade-out 0.2s ease-in;
+}
+
+/* CONTENIDO DEL SHEET - Slide animations basadas en posición */
+/* Desde la DERECHA */
+[data-slot='sheet-content'][data-state='open'].inset-y-0.right-0 {
+  animation: slide-in-from-right 0.5s ease-out;
+}
+
+[data-slot='sheet-content'][data-state='closed'].inset-y-0.right-0 {
+  animation: slide-out-to-right 0.3s ease-in;
+}
+
+/* Desde la IZQUIERDA */
+[data-slot='sheet-content'][data-state='open'].inset-y-0.left-0 {
+  animation: slide-in-from-left 0.5s ease-out;
+}
+
+[data-slot='sheet-content'][data-state='closed'].inset-y-0.left-0 {
+  animation: slide-out-to-left 0.3s ease-in;
+}
+
+/* Desde ARRIBA */
+[data-slot='sheet-content'][data-state='open'].inset-x-0.top-0 {
+  animation: slide-in-from-top 0.5s ease-out;
+}
+
+[data-slot='sheet-content'][data-state='closed'].inset-x-0.top-0 {
+  animation: slide-out-to-top 0.3s ease-in;
+}
+
+/* Desde ABAJO */
+[data-slot='sheet-content'][data-state='open'].inset-x-0.bottom-0 {
+  animation: slide-in-from-bottom 0.5s ease-out;
+}
+
+[data-slot='sheet-content'][data-state='closed'].inset-x-0.bottom-0 {
+  animation: slide-out-to-bottom 0.3s ease-in;
 }

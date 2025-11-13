@@ -1,25 +1,54 @@
-import { Tables } from '@/interfaces/supabase'
+'use client'
+
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import {
+  EReceiptStatus,
+  transformReceiptStatus
+} from '../../utils/statusTransformer'
+import { IReceiptDetail } from '../../interfaces/receipts'
+import { Button } from '@/components/ui/button'
+import { MdOutlineArrowBackIosNew } from 'react-icons/md'
+import { useRouter } from 'next/navigation'
 
 export const DetailReceipt = ({
   receiptData
 }: {
-  receiptData: Tables<'receipts'>
+  receiptData: IReceiptDetail
 }) => {
+  const router = useRouter()
   return (
     <div className="bg-card text-card-foreground rounded-2xl p-6 sm:p-8 full-w">
-      {/* título */}
-      <div className="px-4 sm:px-0 ">
-        <h6 className="text-base  font-semibold text-foreground">
-          {`Código: ${receiptData?.receipt_code}`}
-        </h6>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          {receiptData?.created_at &&
-            format(new Date(receiptData.created_at), 'MMMM d, yyyy', {
-              locale: es
-            })}
-        </p>
+      {/* header */}
+      <div className="px-4 sm:px-0 flex gap-4">
+        <Button
+          className="pt-1 cursor-pointer flex items-center justify-center"
+          variant={'default'}
+          onClick={() => router.push('/inventory/movements/receipts')}
+        >
+          <MdOutlineArrowBackIosNew size={20} />
+        </Button>
+        <section>
+          {/* TÍTULO */}
+          <section className="flex items-center">
+            <h6 className="text-base flex items-center  font-semibold text-foreground">
+              {`Código: ${receiptData?.receipt_code}`}
+            </h6>
+            <div>
+              {receiptData?.status &&
+                transformReceiptStatus({
+                  status: receiptData?.status as EReceiptStatus
+                })}
+            </div>
+          </section>
+          {/* FECHA CREACIÓN */}
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+            {receiptData?.created_at &&
+              format(new Date(receiptData.created_at), 'MMMM d, yyyy', {
+                locale: es
+              })}
+          </p>
+        </section>
       </div>
 
       {/* información */}
@@ -30,7 +59,7 @@ export const DetailReceipt = ({
             <div>
               <dt className="text-sm font-medium text-foreground">Proveedor</dt>
               <dd className="mt-1 text-sm text-secondary sm:col-span-2 sm:mt-0">
-                {receiptData?.supplier_id}
+                {receiptData?.supplier_name}
               </dd>
             </div>
             {/* Código de la entrada */}

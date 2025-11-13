@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { IReceipt } from '../../interfaces/receipts'
 import Link from 'next/link'
+import { transformReceiptStatus } from '../../utils/statusTransformer'
 export const receiptColumns: ColumnDef<IReceipt>[] = [
   {
     id: 'select',
@@ -97,10 +98,10 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
     }
   },
   {
-    accessorKey: 'cost',
+    accessorKey: 'total',
     header: () => <div className="text-center">Costo</div>,
     cell: ({ row }) => {
-      const cost = parseFloat(row.getValue('cost'))
+      const cost = parseFloat(row.getValue('total'))
 
       // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat('es-CO', {
@@ -119,16 +120,13 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
     )
   },
   {
-    accessorKey: 'created_at',
-    header: () => <div className="text-center">Creado el</div>,
-    cell: ({ row }) => {
-      const date = new Date(row.getValue('created_at'))
-      return (
-        <div className="text-center">
-          {format(date, 'MMMM d, yyyy', { locale: es })}
-        </div>
-      )
-    }
+    accessorKey: 'status',
+    header: () => <div className="text-center">Estado</div>,
+    cell: ({ row }) => (
+      <div className="text-center">
+        {transformReceiptStatus({ status: row.getValue('status') })}
+      </div>
+    )
   },
   {
     id: 'actions',
