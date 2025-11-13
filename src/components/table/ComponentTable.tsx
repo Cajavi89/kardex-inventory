@@ -31,46 +31,31 @@ import {
   TableRow
 } from '@/components/ui/table'
 
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-  SheetClose
-} from '@/components/ui/sheet'
-
-import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-import { ChevronDown, Filter } from 'lucide-react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { ChevronDown } from 'lucide-react'
+import { FilterConfig, FilterValues } from '@/interfaces/filters'
+import { AdvancedFilters } from '../advancedFilters/advancedFilters'
+
+interface TableComponentProps<T> {
+  data: T[]
+  columns: ColumnDef<T>[]
+  searchColumn?: string // Columna para búsqueda rápida (ej: "name")
+  searchPlaceholder?: string // Placeholder para el input de búsqueda
+  advancedFilters?: FilterConfig[] // Configuración de filtros avanzados
+}
 
 export function TableComponent<T>({
   data,
-  columns
-}: {
-  data: T[]
-  columns: ColumnDef<T>[]
-}) {
+  columns,
+  searchColumn,
+  searchPlaceholder = 'Buscar...',
+  advancedFilters = []
+}: TableComponentProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-
-  const [advancedFilters, setAdvancedFilters] = useState({
-    status: '',
-    supplier: '',
-    dateFrom: '',
-    dateTo: ''
-  })
 
   const table = useReactTable({
     data,
@@ -91,123 +76,69 @@ export function TableComponent<T>({
     }
   })
 
-  const applyAdvancedFilters = () => {
-    if (advancedFilters.status) {
-      table.getColumn('status')?.setFilterValue(advancedFilters.status)
-    }
-    if (advancedFilters.supplier) {
-      table.getColumn('supplier')?.setFilterValue(advancedFilters.supplier)
-    }
+  const handleApplyFilters = (values: FilterValues) => {
+    // Aplicar cada filtro a su columna correspondiente
+    Object.entries(values).forEach(([columnId, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        // Convertir strings "true"/"false" a booleanos para campos booleanos
+        let filterValue = value
+
+        if (value === 'true') filterValue = true
+        if (value === 'false') filterValue = false
+
+        // Para rangos de fechas, pasar el objeto completo
+        if (typeof value === 'object' && 'from' in value && 'to' in value) {
+          // Solo aplicar si al menos una fecha está definida
+          if (value.from || value.to) {
+            filterValue = value
+          } else {
+            return // No aplicar filtro si ambas fechas están vacías
+          }
+        }
+
+        table.getColumn(columnId)?.setFilterValue(filterValue)
+      }
+    })
+  }
+
+  const handleResetFilters = () => {
+    // Limpiar todos los filtros excepto el de búsqueda rápida
+    const searchValue = searchColumn
+      ? table.getColumn(searchColumn)?.getFilterValue()
+      : null
+
+    setColumnFilters(
+      searchValue && searchColumn
+        ? [{ id: searchColumn, value: searchValue }]
+        : []
+    )
   }
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4 gap-2">
-        {/* Filtro rápido */}
-        {table.getColumn('name') && (
+        {/* Filtro rápido (búsqueda) */}
+        {searchColumn && table.getColumn(searchColumn) && (
           <Input
-            placeholder="Buscar por nombre..."
-            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+            placeholder={searchPlaceholder}
+            value={
+              (table.getColumn(searchColumn)?.getFilterValue() as string) ?? ''
+            }
             onChange={(event) =>
-              table.getColumn('name')?.setFilterValue(event.target.value)
+              table.getColumn(searchColumn)?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
         )}
 
-        {/* Sheet de filtros avanzados */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" /> Filtros avanzados
-            </Button>
-          </SheetTrigger>
-
-          {/* REMOVIDAS las clases de animación redundantes */}
-          <SheetContent side="right" className="w-[400px] space-y-6">
-            <SheetHeader>
-              <SheetTitle>Filtros avanzados</SheetTitle>
-            </SheetHeader>
-
-            <div className="space-y-4 px-3">
-              {/* Estado */}
-              <div className="grid gap-2">
-                <Label htmlFor="status">Estado</Label>
-                <Select
-                  value={advancedFilters.status}
-                  onValueChange={(v) =>
-                    setAdvancedFilters((prev) => ({ ...prev, status: v }))
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar estado" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="paid">Paid</SelectItem>
-                    <SelectItem value="unpaid">Unpaid</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Proveedor */}
-              <div className="grid gap-2">
-                <Label htmlFor="supplier">Proveedor</Label>
-                <Input
-                  id="supplier"
-                  placeholder="Nombre del proveedor"
-                  value={advancedFilters.supplier}
-                  onChange={(e) =>
-                    setAdvancedFilters((prev) => ({
-                      ...prev,
-                      supplier: e.target.value
-                    }))
-                  }
-                />
-              </div>
-
-              {/* Fechas */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="grid gap-2">
-                  <Label htmlFor="dateFrom">Desde</Label>
-                  <Input
-                    type="date"
-                    id="dateFrom"
-                    value={advancedFilters.dateFrom}
-                    onChange={(e) =>
-                      setAdvancedFilters((prev) => ({
-                        ...prev,
-                        dateFrom: e.target.value
-                      }))
-                    }
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="dateTo">Hasta</Label>
-                  <Input
-                    type="date"
-                    id="dateTo"
-                    value={advancedFilters.dateTo}
-                    onChange={(e) =>
-                      setAdvancedFilters((prev) => ({
-                        ...prev,
-                        dateTo: e.target.value
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            <SheetFooter className="mt-auto border-t pt-4 flex justify-end gap-2">
-              <Button onClick={applyAdvancedFilters}>Aplicar filtros</Button>
-              <SheetClose asChild>
-                <Button variant="outline">Cerrar</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+        {/* Filtros avanzados (solo si se proporcionan) */}
+        {advancedFilters.length > 0 && (
+          <AdvancedFilters
+            filters={advancedFilters}
+            onApplyFilters={handleApplyFilters}
+            onResetFilters={handleResetFilters}
+          />
+        )}
 
         {/* Selector de columnas */}
         <DropdownMenu>
