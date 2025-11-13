@@ -297,11 +297,11 @@ h6 {
 /* CONTENIDO DEL SHEET - Slide animations basadas en posición */
 /* Desde la DERECHA */
 [data-slot='sheet-content'][data-state='open'].inset-y-0.right-0 {
-  animation: slide-in-from-right 0.5s ease-out;
+  animation: slide-in-from-right 0.2s ease-out;
 }
 
 [data-slot='sheet-content'][data-state='closed'].inset-y-0.right-0 {
-  animation: slide-out-to-right 0.3s ease-in;
+  animation: slide-out-to-right 0.1s ease-in;
 }
 
 /* Desde la IZQUIERDA */

@@ -95,7 +95,7 @@ export const DetailReceipt = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 px-4 py-6 sm:px-0">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4 px-4 py-6 sm:px-0">
             {/* Subtotal */}
             <div>
               <dt className="text-sm font-medium text-foreground">Subtotal</dt>
@@ -127,6 +127,19 @@ export const DetailReceipt = ({
               <dd className="mt-1 text-sm text-secondary sm:col-span-2 sm:mt-0">
                 {receiptData?.discount &&
                   receiptData.discount.toLocaleString('es-CO', {
+                    style: 'currency',
+                    currency: 'COP'
+                  })}
+              </dd>
+            </div>
+            {/* transporte */}
+            <div>
+              <dt className="text-sm font-medium text-foreground">
+                Transporte
+              </dt>
+              <dd className="mt-1 text-sm text-secondary sm:col-span-2 sm:mt-0">
+                {receiptData?.transport &&
+                  receiptData.transport.toLocaleString('es-CO', {
                     style: 'currency',
                     currency: 'COP'
                   })}
