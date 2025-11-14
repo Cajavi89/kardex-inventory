@@ -20,4 +20,5 @@ export interface IReceiptDetail extends IReceipt {
   tax: number // IVA u otros impuestos
   transport: number | null // transporte, fletes opcionales
   discount: number | null // descuentos opcionales
+  comments: string | null // comentarios adicionales
 }

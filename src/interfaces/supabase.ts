@@ -386,8 +386,47 @@ export type Database = {
           },
         ]
       }
+      receipt_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          method: string | null
+          payment_date: string | null
+          receipt_id: string | null
+          reference_paid: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          method?: string | null
+          payment_date?: string | null
+          receipt_id?: string | null
+          reference_paid?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          method?: string | null
+          payment_date?: string | null
+          receipt_id?: string | null
+          reference_paid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipt_payments_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "receipts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       receipts: {
         Row: {
+          comments: string | null
           created_at: string | null
           discount: number | null
           id: string
@@ -402,6 +441,7 @@ export type Database = {
           transport: number | null
         }
         Insert: {
+          comments?: string | null
           created_at?: string | null
           discount?: number | null
           id?: string
@@ -416,6 +456,7 @@ export type Database = {
           transport?: number | null
         }
         Update: {
+          comments?: string | null
           created_at?: string | null
           discount?: number | null
           id?: string

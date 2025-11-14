@@ -59,7 +59,8 @@ export async function getReceiptById({
         tax,
         transport,
         discount,
-        created_at
+        created_at,
+        comments
       `
     )
     .eq('id', receiptId)

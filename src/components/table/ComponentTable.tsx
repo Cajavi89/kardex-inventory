@@ -36,6 +36,7 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { FilterConfig, FilterValues } from '@/interfaces/filters'
 import { AdvancedFilters } from '../advancedFilters/advancedFilters'
+import { CreateReceiptDialog } from '@/features/movements/receipts/components/createReceiptDialog/CreateReceiptDialog'
 
 interface TableComponentProps<T> {
   data: T[]
@@ -130,6 +131,9 @@ export function TableComponent<T>({
             className="max-w-sm"
           />
         )}
+
+        {/* Botón para agregar nueva entrada */}
+        <CreateReceiptDialog />
 
         {/* Filtros avanzados (solo si se proporcionan) */}
         {advancedFilters.length > 0 && (

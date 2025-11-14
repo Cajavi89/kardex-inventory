@@ -55,26 +55,24 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => <div className="">{row.getValue('supplier_name')}</div>
+  },
+  {
+    accessorKey: 'reference_document',
+    header: 'Factura',
     cell: ({ row }) => {
-      const supplierName = row.getValue('supplier_name') as string
       const receiptId = row.original.id
+      const documentReference = row.getValue('reference_document') as string
 
       return (
         <Link
           href={`/inventory/movements/receipts/${receiptId}`}
           className="text-blue-600 hover:underline cursor-pointer"
         >
-          {supplierName || '—'}
+          {documentReference || '—'}
         </Link>
       )
     }
-  },
-  {
-    accessorKey: 'reference_document',
-    header: 'Factura',
-    cell: ({ row }) => (
-      <div className="uppercase">{row.getValue('reference_document')}</div>
-    )
   },
   {
     accessorKey: 'receipt_code',
