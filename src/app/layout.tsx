@@ -11,6 +11,7 @@ import { Providers } from '@/components/providers/Providers'
 
 // import UserDataInitializer from '@/components/UserInicializer'
 import { getCookie } from '@/services/general.service'
+import { Toaster } from 'sonner'
 // import { SupportBugsDialog } from '@/components/Dialogs/SupportBugsDialog'
 
 // import { NotificationsDrawer } from '@/components/notifications/NotificationDrawer'
@@ -52,6 +53,7 @@ export default async function RootLayout({
             {/* <SupportBugsDialog /> */}
             {/* <PageHeader /> */}
             {children}
+            <Toaster />
           </main>
         </SidebarProvider>
       </body>

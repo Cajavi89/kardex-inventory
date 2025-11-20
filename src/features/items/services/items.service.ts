@@ -32,3 +32,22 @@ export async function getAllItems() {
     unit: item.unit?.name ?? 'N/A'
   }))
 }
+
+export async function getAllItemsSimple() {
+  const supabase = await createSupabaseClientSR()
+  const { data, error } = await supabase
+    .from('items')
+    .select(
+      `
+      id,
+      name
+    `
+    )
+    .order('name', { ascending: true })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data
+}

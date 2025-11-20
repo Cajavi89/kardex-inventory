@@ -59,7 +59,7 @@ export function NavProfile({
                 'mx-auto ml-3 hover:bg-background'
               } `}
             >
-              <div className="flex-shrink-0 self-center">
+              <div className="shrink-0 self-center">
                 <FaUserCircle size={24} />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -80,7 +80,7 @@ export function NavProfile({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <FaUserCircle size={16} />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,14 +31,17 @@ import { X } from 'lucide-react'
 import { BiSolidAddToQueue } from 'react-icons/bi'
 import { addReceipt } from '../../services/receipts.service'
 import { InputMoney } from '@/components/inputMoney/InputMoney'
+import { getAllItemsSimple } from '@/features/items/services/items.service'
+import { createReceiptItems } from '../../receipt_details/services/receiptDetails.service'
 
 /* ------------------ SCHEMAS ------------------ */
 
 // schema del item
 const itemSchema = z.object({
-  product: z.string().min(1, 'Requerido'),
-  qty: z.number().min(1),
-  price: z.number().min(0)
+  item_id: z.string().min(1, 'Requerido'),
+  batch: z.string().min(1, 'Requerido'),
+  quantity: z.number().min(1, 'Requerido'),
+  unit_cost: z.number().min(1, 'Requerido')
 })
 
 // STEP 1: solo datos de la factura
@@ -52,9 +56,7 @@ const step1Schema = z.object({
   total: z.number().optional(),
   transport: z.number().optional(),
   discount: z.number().optional(),
-  status: z
-    .enum(['pending', 'completed', 'cancelled', 'in_progress'])
-    .optional(),
+  status: z.enum(['cancelled', 'paid', 'unpaid', 'draft']).optional(),
   comments: z.string().optional()
 })
 
@@ -71,9 +73,12 @@ type TFormValues = z.output<typeof formSchema>
 /* ------------------------------------------------------------- */
 
 export const CreateReceiptDialog = () => {
+  const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
   const [suppliers, setSuppliers] = useState<{ name: string; id: string }[]>([])
+  const [itemsList, setItemsList] = useState<{ name: string; id: string }[]>([])
   const [isLoadingSuppliers, setIsLoadingSuppliers] = useState(true)
+  const [isLoadingItems, setIsLoadingItems] = useState(true)
 
   const form = useForm<TFormValues>({
     resolver: zodResolver(formSchema),
@@ -98,7 +103,7 @@ export const CreateReceiptDialog = () => {
   const items = form.watch('items')
 
   const addItem = () => {
-    const blank = { product: '', qty: 1, price: 0 }
+    const blank = { item_id: '', quantity: 1, unit_cost: 0, batch: '' }
     form.setValue('items', [...items, blank])
   }
 
@@ -132,6 +137,11 @@ export const CreateReceiptDialog = () => {
       delete payload.id // no enviar id vacío
       // delete payload.items // no existe aquí
 
+      if (form.getValues('id')) {
+        // ya existe, no crear de nuevo
+        setStep(2)
+        return
+      }
       const receiptId = await addReceipt({ receiptData: payload })
 
       // Guardar ID en el form para Step 2
@@ -164,20 +174,13 @@ export const CreateReceiptDialog = () => {
 
     const inserts = values.items.map((item) => ({
       receipt_id,
-      product: item.product,
-      qty: item.qty,
-      price: item.price
+      item_id: item.item_id,
+      quantity: item.quantity,
+      unit_cost: item.unit_cost,
+      batch: item.batch
     }))
-    console.log('🚀 ~ onSubmit ~ inserts:', inserts)
 
-    // const { error } = await addReceiptItemsDB(inserts)
-
-    // if (error) {
-    //   console.error(error)
-    //   return
-    // }
-
-    console.log('FACTURA COMPLETA', values)
+    await createReceiptItems({ items: inserts })
     onCancelHandler()
   }
 
@@ -185,7 +188,7 @@ export const CreateReceiptDialog = () => {
 
   const onCancelHandler = () => {
     form.reset()
-    setStep(1)
+    setIsOpen(false)
   }
 
   /* ------------------ load suppliers ------------------ */
@@ -194,17 +197,21 @@ export const CreateReceiptDialog = () => {
     getAllSuppliersSimple()
       .then((list) => setSuppliers(list || []))
       .finally(() => setIsLoadingSuppliers(false))
+
+    getAllItemsSimple()
+      .then((list) => setItemsList(list || []))
+      .finally(() => setIsLoadingItems(false))
   }, [])
 
   /* ============================================================= */
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Agregar entrada de</Button>
       </DialogTrigger>
 
-      <DialogContent className="w-full min-h-[400px] max-h-[85vh] flex flex-col">
+      <DialogContent className="w-full min-w-[600px] min-h-[400px] max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Agregar entrada de inventario</DialogTitle>
           <DialogDescription className="flex flex-row justify-between items-center">
@@ -396,10 +403,10 @@ export const CreateReceiptDialog = () => {
                             onValueChange={field.onChange}
                             placeholder="Seleccionar estado"
                             options={[
-                              { label: 'Pendiente', value: 'pending' },
-                              { label: 'Completado', value: 'completed' },
+                              { label: 'Pagada', value: 'paid' },
+                              { label: 'No pagada', value: 'unpaid' },
                               { label: 'Cancelado', value: 'cancelled' },
-                              { label: 'En progreso', value: 'in_progress' }
+                              { label: 'Borrador', value: 'draft' }
                             ]}
                           />
                           <FormMessage />
@@ -447,17 +454,46 @@ export const CreateReceiptDialog = () => {
                   {items.map((item, index) => (
                     <div
                       key={index}
-                      className="border p-4 rounded-md grid grid-cols-12 gap-3"
+                      className="border border-gray-300 p-4 rounded-md grid grid-cols-12 gap-3"
                     >
-                      {/* PRODUCTO */}
+                      {/* ÍTEM */}
                       <FormField
                         control={form.control}
-                        name={`items.${index}.product`}
+                        name={`items.${index}.item_id`}
+                        // name={`items.${index}.item_id`}
+                        render={({ field }) => {
+                          return (
+                            <FormItem className="col-span-4">
+                              <FormLabel>Ítem</FormLabel>
+                              <SelectDropdown
+                                className="min-w-full max-w-full"
+                                isControlled={true}
+                                value={field.value ?? ''}
+                                onValueChange={field.onChange}
+                                placeholder="Seleccionar ítem"
+                                activeFilter={true}
+                                isPending={isLoadingItems}
+                                options={itemsList.map((il) => ({
+                                  value: il.id.toString(),
+                                  label: il.name.toString()
+                                }))}
+                              />
+
+                              <FormMessage />
+                            </FormItem>
+                          )
+                        }}
+                      />
+
+                      {/* LOTE */}
+                      <FormField
+                        control={form.control}
+                        name={`items.${index}.batch`}
                         render={({ field }) => (
-                          <FormItem className="col-span-5">
-                            <FormLabel>Producto</FormLabel>
+                          <FormItem className="col-span-2">
+                            <FormLabel>Lote</FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="Nombre / Código" />
+                              <Input {...field} placeholder="LT-PC-23" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -467,9 +503,9 @@ export const CreateReceiptDialog = () => {
                       {/* CANTIDAD */}
                       <FormField
                         control={form.control}
-                        name={`items.${index}.qty`}
+                        name={`items.${index}.quantity`}
                         render={({ field }) => (
-                          <FormItem className="col-span-3">
+                          <FormItem className="col-span-2">
                             <FormLabel>Cantidad</FormLabel>
                             <FormControl>
                               <Input
@@ -485,20 +521,18 @@ export const CreateReceiptDialog = () => {
                         )}
                       />
 
-                      {/* PRECIO */}
+                      {/* COSTO */}
                       <FormField
                         control={form.control}
-                        name={`items.${index}.price`}
+                        name={`items.${index}.unit_cost`}
                         render={({ field }) => (
                           <FormItem className="col-span-3">
-                            <FormLabel>Precio</FormLabel>
+                            <FormLabel>Costo unitario</FormLabel>
                             <FormControl>
-                              <Input
-                                type="number"
+                              <InputMoney
                                 value={field.value}
-                                onChange={(e) =>
-                                  field.onChange(Number(e.target.value))
-                                }
+                                onChange={field.onChange}
+                                maxIntegers={15} // opcional
                               />
                             </FormControl>
                             <FormMessage />
@@ -514,7 +548,7 @@ export const CreateReceiptDialog = () => {
                           size="icon"
                           onClick={() => removeItem(index)}
                         >
-                          <X size={16} />
+                          <X size={12} />
                         </Button>
                       </div>
                     </div>

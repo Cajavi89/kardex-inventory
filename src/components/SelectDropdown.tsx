@@ -14,8 +14,9 @@ import { Input } from '@/components/ui/input'
 import { useState, useMemo } from 'react'
 
 interface SelectDropdownProps {
+  value?: string
   onValueChange?: (value: string) => void
-  defaultValue: string | undefined
+  defaultValue?: string
   placeholder?: string
   isPending?: boolean
   options: { label: string; value: string }[] | undefined
@@ -23,10 +24,11 @@ interface SelectDropdownProps {
   className?: string
   isControlled?: boolean
   disabledTooltip?: string
-  activeFilter?: boolean // Nueva prop para activar el filtrado
+  activeFilter?: boolean
 }
 
 export function SelectDropdown({
+  value,
   defaultValue,
   onValueChange,
   isPending,
@@ -40,8 +42,8 @@ export function SelectDropdown({
 }: SelectDropdownProps) {
   const [filterValue, setFilterValue] = useState('')
 
-  const defaultState = isControlled
-    ? { value: defaultValue, onValueChange }
+  const selectProps = isControlled
+    ? { value, onValueChange }
     : { defaultValue, onValueChange }
 
   // Filtrar opciones basándose en el texto ingresado
@@ -56,11 +58,11 @@ export function SelectDropdown({
   }, [options, filterValue, activeFilter])
 
   return (
-    <Select {...defaultState}>
+    <Select {...selectProps}>
       <FormControl>
         <TooltipAssign tooltipMsg={disabled ? disabledTooltip : ''}>
           <SelectTrigger disabled={disabled} className={cn(className)}>
-            <SelectValue placeholder={placeholder ?? 'Select'} />
+            <SelectValue placeholder={placeholder ?? 'Seleccionar'} />
           </SelectTrigger>
         </TooltipAssign>
       </FormControl>

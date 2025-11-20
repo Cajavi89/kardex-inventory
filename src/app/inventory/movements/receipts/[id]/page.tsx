@@ -16,8 +16,6 @@ export default async function ReceiptItemsDetailsPage({
     receiptItemsDataPromise,
     receiptDataPromise
   ])
-  console.log('🚀 ~ SuppliersPage ~ receiptData:', receiptData)
-  console.log('🚀 ~ SuppliersPage ~ receiptItemsData:', receiptItemsData)
 
   return (
     <section className="overflow-y-auto  h-full">

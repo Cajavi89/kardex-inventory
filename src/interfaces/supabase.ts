@@ -350,28 +350,28 @@ export type Database = {
       }
       receipt_items: {
         Row: {
+          batch: string | null
           created_at: string | null
           id: string
           item_id: string | null
-          lot_code: string | null
           quantity: number
           receipt_id: string | null
           unit_cost: number
         }
         Insert: {
+          batch?: string | null
           created_at?: string | null
           id?: string
           item_id?: string | null
-          lot_code?: string | null
           quantity: number
           receipt_id?: string | null
           unit_cost: number
         }
         Update: {
+          batch?: string | null
           created_at?: string | null
           id?: string
           item_id?: string | null
-          lot_code?: string | null
           quantity?: number
           receipt_id?: string | null
           unit_cost?: number
