@@ -2,6 +2,9 @@
 
 import { createSupabaseClientSR } from '@/utils/supabase/server'
 import { IReceipt, IReceiptDetail, IStatus } from '../interfaces/receipts'
+import { TablesInsert } from '@/interfaces/supabase'
+import { handleSupabaseError } from '@/utils/handleErrors'
+import { revalidatePath } from 'next/cache'
 // import { Tables } from '@/interfaces/supabase'
 
 export async function getAllReceipts(): Promise<IReceipt[]> {
@@ -76,4 +79,25 @@ export async function getReceiptById({
     created_at: created_at ?? '',
     supplier_name: receipt.supplier_id?.name ?? null
   }))
+}
+
+export async function addReceipt({
+  receiptData
+}: {
+  receiptData: Omit<TablesInsert<'receipts'>, 'id' | 'created_at'>
+}) {
+  const supabase = await createSupabaseClientSR()
+  const { data, error } = await supabase
+    .from('receipts')
+    .insert([receiptData])
+    .select('id')
+    .single()
+
+  if (error) {
+    handleSupabaseError({ error })
+  }
+
+  revalidatePath(`/inventory/movements/receipts`)
+
+  return data?.id
 }

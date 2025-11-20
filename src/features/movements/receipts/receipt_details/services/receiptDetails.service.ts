@@ -3,7 +3,6 @@
 import { createSupabaseClientSR } from '@/utils/supabase/server'
 
 export const getReceiptItemsById = async (receiptId: string) => {
-  console.log('🚀 ~ getReceiptById ~ id:', receiptId)
   const supabase = await createSupabaseClientSR()
   const { data, error } = await supabase
     .from('receipt_items')
