@@ -26,7 +26,10 @@ export default async function ReceiptItemsDetailsPage({
           <DetailReceipt receiptData={receiptData[0]} />
 
           {/* tabla de ítems */}
-          <TableItemsDetail receiptItemsData={receiptItemsData} />
+          <TableItemsDetail
+            receiptItemsData={receiptItemsData}
+            receiptId={id}
+          />
         </section>
       </section>
     </section>

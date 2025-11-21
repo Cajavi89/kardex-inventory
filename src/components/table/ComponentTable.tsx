@@ -36,7 +36,6 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { FilterConfig, FilterValues } from '@/interfaces/filters'
 import { AdvancedFilters } from '../advancedFilters/advancedFilters'
-import { CreateReceiptDialog } from '@/features/movements/receipts/components/createReceiptDialog/CreateReceiptDialog'
 
 interface TableComponentProps<T> {
   data: T[]
@@ -44,6 +43,7 @@ interface TableComponentProps<T> {
   searchColumn?: string // Columna para búsqueda rápida (ej: "name")
   searchPlaceholder?: string // Placeholder para el input de búsqueda
   advancedFilters?: FilterConfig[] // Configuración de filtros avanzados
+  createDialog?: React.ReactNode // Componente para el diálogo de creación
 }
 
 export function TableComponent<T>({
@@ -51,7 +51,8 @@ export function TableComponent<T>({
   columns,
   searchColumn,
   searchPlaceholder = 'Buscar...',
-  advancedFilters = []
+  advancedFilters = [],
+  createDialog
 }: TableComponentProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -133,7 +134,7 @@ export function TableComponent<T>({
         )}
 
         {/* Botón para agregar nueva entrada */}
-        <CreateReceiptDialog />
+        {createDialog}
 
         {/* Filtros avanzados (solo si se proporcionan) */}
         {advancedFilters.length > 0 && (
