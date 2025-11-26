@@ -18,6 +18,7 @@ import {
 import { IReceipt } from '../../interfaces/receipts'
 import Link from 'next/link'
 import { transformReceiptStatus } from '../../utils/statusTransformer'
+import { receiptsColumnsNames } from '../../constants/receiptsColumnsNames'
 
 export const receiptColumns: ColumnDef<IReceipt>[] = [
   {
@@ -50,7 +51,7 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Proveedor
+          {receiptsColumnsNames.supplier_name}
           <ArrowUpDown />
         </Button>
       )
@@ -59,7 +60,7 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'reference_document',
-    header: 'Factura',
+    header: receiptsColumnsNames.reference_document,
     cell: ({ row }) => {
       const receiptId = row.original.id
       const documentReference = row.getValue('reference_document') as string
@@ -76,7 +77,9 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'receipt_code',
-    header: () => <div className="text-center">Código de Recepción</div>,
+    header: () => (
+      <div className="text-center">{receiptsColumnsNames.receipt_code}</div>
+    ),
     cell: ({ row }) => (
       <div className="text-center font-medium">
         {row.getValue('receipt_code')}
@@ -85,7 +88,9 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'receipt_date',
-    header: () => <div className="text-center">Recibido el</div>,
+    header: () => (
+      <div className="text-center">{receiptsColumnsNames.receipt_date}</div>
+    ),
     cell: ({ row }) => {
       const date = new Date(row.getValue('receipt_date'))
       return (
@@ -114,7 +119,9 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'total',
-    header: () => <div className="text-center">Costo</div>,
+    header: () => (
+      <div className="text-center">{receiptsColumnsNames.total}</div>
+    ),
     cell: ({ row }) => {
       const cost = parseFloat(row.getValue('total'))
 
@@ -133,7 +140,9 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'active',
-    header: () => <div className="text-center">Activo</div>,
+    header: () => (
+      <div className="text-center">{receiptsColumnsNames.active}</div>
+    ),
     cell: ({ row }) => (
       <div className="text-center">{row.getValue('active') ? 'Sí' : 'No'}</div>
     ),
@@ -147,7 +156,9 @@ export const receiptColumns: ColumnDef<IReceipt>[] = [
   },
   {
     accessorKey: 'status',
-    header: () => <div className="text-center">Estado</div>,
+    header: () => (
+      <div className="text-center">{receiptsColumnsNames.status}</div>
+    ),
     cell: ({ row }) => (
       <div className="text-center">
         {transformReceiptStatus({ status: row.getValue('status') })}

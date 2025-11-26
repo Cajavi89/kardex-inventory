@@ -2,6 +2,7 @@ import { TableComponent } from '@/components/table/ComponentTable'
 import { CreateReceiptDialog } from '@/features/movements/receipts/components/createReceiptDialog/CreateReceiptDialog'
 import { receiptColumns } from '@/features/movements/receipts/components/table/columns'
 import { receiptFilters } from '@/features/movements/receipts/components/table/ReceiptFilters'
+import { receiptsColumnsNames } from '@/features/movements/receipts/constants/receiptsColumnsNames'
 import { getAllReceipts } from '@/features/movements/receipts/services/receipts.service'
 
 export default async function ReceiptsPage() {
@@ -14,6 +15,7 @@ export default async function ReceiptsPage() {
       <TableComponent
         data={receipts}
         columns={receiptColumns}
+        columnsNames={receiptsColumnsNames}
         searchColumn="supplier_name"
         searchPlaceholder="Buscar por proveedor..."
         advancedFilters={receiptFilters}

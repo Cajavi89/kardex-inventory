@@ -44,6 +44,7 @@ interface TableComponentProps<T> {
   searchPlaceholder?: string // Placeholder para el input de búsqueda
   advancedFilters?: FilterConfig[] // Configuración de filtros avanzados
   createDialog?: React.ReactNode // Componente para el diálogo de creación
+  columnsNames?: Record<string, string> // Mapeo de nombres de columnas
 }
 
 export function TableComponent<T>({
@@ -52,7 +53,8 @@ export function TableComponent<T>({
   searchColumn,
   searchPlaceholder = 'Buscar...',
   advancedFilters = [],
-  createDialog
+  createDialog,
+  columnsNames
 }: TableComponentProps<T>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -149,7 +151,7 @@ export function TableComponent<T>({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -159,11 +161,12 @@ export function TableComponent<T>({
               .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
-                  className="capitalize"
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {column.id}
+                  {columnsNames
+                    ? columnsNames[column.id] ?? column.id
+                    : column.id}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
@@ -223,7 +226,13 @@ export function TableComponent<T>({
 
       {/* Paginación */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
+        <div
+          className={`text-muted-foreground flex-1 text-sm ${
+            table.getFilteredSelectedRowModel().rows.length === 0
+              ? 'hidden'
+              : ''
+          }`}
+        >
           {table.getFilteredSelectedRowModel().rows.length} de{' '}
           {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
         </div>
@@ -233,6 +242,7 @@ export function TableComponent<T>({
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className={`${!table.getCanPreviousPage() ? 'hidden' : ''}`}
           >
             Anterior
           </Button>
@@ -241,6 +251,7 @@ export function TableComponent<T>({
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className={`${!table.getCanNextPage() ? 'hidden' : ''}`}
           >
             Siguiente
           </Button>

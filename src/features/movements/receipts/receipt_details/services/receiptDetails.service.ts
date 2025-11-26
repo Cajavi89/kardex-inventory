@@ -22,20 +22,22 @@ export async function getReceiptItemsById(
       batch,
       quantity,
       unit_cost,
-      created_at
+      created_at,
+      updated_at
       `
     )
     .eq('receipt_id', receiptId)
     .order('id', { ascending: true })
 
   if (error) {
-    throw new Error(error.message)
+    throw handleSupabaseError({ error })
   }
 
   return data.map(({ item_id, ...ri }) => ({
     ...ri,
     item_name: item_id?.name ?? '',
-    item_id: item_id?.id ?? ''
+    item_id: item_id?.id ?? '',
+    updated_at: ri.updated_at ?? ''
   }))
 }
 
@@ -49,28 +51,36 @@ export async function createReceiptItems({
   const { error } = await supabase.from('receipt_items').insert(items)
 
   if (error) {
-    handleSupabaseError({ error })
+    throw handleSupabaseError({ error })
   }
 }
 
 // ========== UPDATE RECEIPT ITEMS BY ID ==========
 export async function updateReceiptItemsById({
-  itemId,
+  rowReceiptId,
   updatedData,
-  receiptId
+  receiptId,
+  itemId
 }: {
-  itemId: string
+  rowReceiptId: string
   updatedData: Partial<TablesUpdate<'receipt_items'>>
   receiptId: string
+  itemId: string
 }) {
   const supabase = await createSupabaseClientSR()
+
+  const updateData: TablesUpdate<'receipt_items'> = {
+    ...updatedData,
+    item_id: itemId
+  }
+  console.log('🚀 ~ updateReceiptItemsById ~ updateData:', updateData)
   const { error } = await supabase
     .from('receipt_items')
-    .update(updatedData)
-    .eq('id', itemId)
+    .update(updateData)
+    .eq('id', rowReceiptId)
 
   if (error) {
-    handleSupabaseError({ error })
+    throw handleSupabaseError({ error })
   }
   revalidatePath(`/inventory/movements/receipts/${receiptId}`)
 }

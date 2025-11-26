@@ -109,6 +109,7 @@ export type Database = {
           issue_id: string | null
           item_id: string | null
           quantity: number
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -116,6 +117,7 @@ export type Database = {
           issue_id?: string | null
           item_id?: string | null
           quantity: number
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -123,6 +125,7 @@ export type Database = {
           issue_id?: string | null
           item_id?: string | null
           quantity?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -226,7 +229,9 @@ export type Database = {
           min_stock: number | null
           name: string
           stock: number | null
+          total_cost: number | null
           unit_id: string | null
+          updated_at: string | null
         }
         Insert: {
           active?: boolean | null
@@ -238,7 +243,9 @@ export type Database = {
           min_stock?: number | null
           name: string
           stock?: number | null
+          total_cost?: number | null
           unit_id?: string | null
+          updated_at?: string | null
         }
         Update: {
           active?: boolean | null
@@ -250,7 +257,9 @@ export type Database = {
           min_stock?: number | null
           name?: string
           stock?: number | null
+          total_cost?: number | null
           unit_id?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -357,6 +366,7 @@ export type Database = {
           quantity: number
           receipt_id: string | null
           unit_cost: number
+          updated_at: string | null
         }
         Insert: {
           batch?: string | null
@@ -366,6 +376,7 @@ export type Database = {
           quantity: number
           receipt_id?: string | null
           unit_cost: number
+          updated_at?: string | null
         }
         Update: {
           batch?: string | null
@@ -375,6 +386,7 @@ export type Database = {
           quantity?: number
           receipt_id?: string | null
           unit_cost?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -539,14 +551,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      consume_item_fifo: {
-        Args: { p_item: string; p_qty: number }
-        Returns: {
-          batch_id: string
-          qty_consumed: number
-          unit_cost: number
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

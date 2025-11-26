@@ -26,6 +26,8 @@ import {
 import { SelectDropdown } from '@/components/SelectDropdown'
 import { useState, useEffect } from 'react'
 import { getAllCategoriesSimple } from '@/features/categories/services/categories.service'
+import { createItem, getAllUnits } from '../../services/items.service'
+import { toast } from 'sonner'
 
 /* ------------------ SCHEMAS ------------------ */
 
@@ -34,9 +36,8 @@ const itemSchema = z.object({
   name: z.string().min(1, 'Requerido'),
   code: z.string().min(1, 'Requerido'),
   category_id: z.string().min(1, 'Requerido'),
-  unit_id: z.number().min(1, 'Requerido'),
-  min_stock: z.string().min(0).optional(),
-  active: z.boolean().optional()
+  unit_id: z.string().min(1, 'Requerido'),
+  min_stock: z.string().optional()
 })
 
 // schema final
@@ -50,7 +51,11 @@ export const CreateItemDialog = () => {
   const [categoriesList, setCategoriesList] = useState<
     { id: string; name: string }[]
   >([])
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const [isLoadingFetch, setIsLoadingFetch] = useState({
+    categories: true,
+    units: true
+  })
+  const [unitsList, setUnitsList] = useState<{ id: string; name: string }[]>([])
 
   const form = useForm<TFormValues>({
     resolver: zodResolver(itemSchema),
@@ -59,25 +64,39 @@ export const CreateItemDialog = () => {
       code: '',
       category_id: undefined,
       unit_id: undefined,
-      min_stock: '',
-      active: true
+      min_stock: ''
     }
   })
 
   /* ------------------ SUBMIT all (Step 2) ------------------ */
 
   const onSubmit = async (values: TFormValues) => {
-    console.log('en el submit')
     const check = itemSchema.safeParse(values)
 
     if (!check.success) {
-      console.log('dentro')
       check.error.issues.forEach((issue) => {
         form.setError(issue.path.join('.') as never, { message: issue.message })
       })
       return
     }
-    console.log('🚀 ~ onSubmit ~ values:', values)
+
+    const { min_stock, ...restValues } = values
+
+    const createNewItem = createItem({
+      itemData: {
+        ...restValues,
+        min_stock:
+          min_stock === '' || values.min_stock === undefined
+            ? undefined
+            : Number(min_stock)
+      }
+    })
+
+    toast.promise(createNewItem, {
+      loading: 'Creando ítem...',
+      success: 'Ítem creado con éxito',
+      error: 'Error al crear el ítem'
+    })
     onCancelHandler()
   }
 
@@ -91,9 +110,15 @@ export const CreateItemDialog = () => {
   /* ------------------ load DATA ------------------ */
 
   useEffect(() => {
-    getAllCategoriesSimple()
-      .then((list) => setCategoriesList(list || []))
-      .finally(() => setIsLoadingCategories(false))
+    const fetchCategories = getAllCategoriesSimple()
+    const fetchUnitsList = getAllUnits()
+
+    Promise.all([fetchCategories, fetchUnitsList])
+      .then(([categories, units]) => {
+        setCategoriesList(categories || [])
+        setUnitsList(units || [])
+      })
+      .finally(() => setIsLoadingFetch({ categories: false, units: false }))
   }, [])
 
   /* ============================================================= */
@@ -120,45 +145,22 @@ export const CreateItemDialog = () => {
             <div className="flex-1 overflow-y-auto px-1 pb-4">
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="category_id"
-                    render={({ field }) => {
-                      return (
+                  <div className="col-span-2">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Categoría</FormLabel>
-                          <SelectDropdown
-                            className="min-w-full max-w-full"
-                            defaultValue={field.value?.toString()}
-                            onValueChange={field.onChange}
-                            placeholder="Seleccionar categoría"
-                            activeFilter={true}
-                            isPending={isLoadingCategories}
-                            options={categoriesList.map((category) => ({
-                              value: category.id.toString(),
-                              label: category.name.toString()
-                            }))}
-                          />
-
+                          <FormLabel>Nombre</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Propalcote 150" {...field} />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
-                      )
-                    }}
-                  />
+                      )}
+                    />
+                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nombre</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Propalcote 150" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                   <FormField
                     control={form.control}
                     name="code"
@@ -185,6 +187,59 @@ export const CreateItemDialog = () => {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="unit_id"
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Unidad</FormLabel>
+                          <SelectDropdown
+                            className="min-w-full max-w-full"
+                            defaultValue={field.value?.toString()}
+                            onValueChange={field.onChange}
+                            placeholder="Seleccionar unidad"
+                            activeFilter={true}
+                            isPending={isLoadingFetch.units}
+                            options={unitsList.map((unit) => ({
+                              value: unit.id.toString(),
+                              label: unit.name.toString()
+                            }))}
+                          />
+
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="category_id"
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Categoría</FormLabel>
+                          <SelectDropdown
+                            className="min-w-full max-w-full"
+                            defaultValue={field.value?.toString()}
+                            onValueChange={field.onChange}
+                            placeholder="Seleccionar categoría"
+                            activeFilter={true}
+                            isPending={isLoadingFetch.categories}
+                            options={categoriesList.map((category) => ({
+                              value: category.id.toString(),
+                              label: category.name.toString()
+                            }))}
+                          />
+
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+
                   {/* <FormField
                     control={form.control}
                     name="active"

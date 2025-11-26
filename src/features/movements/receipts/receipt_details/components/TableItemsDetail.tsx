@@ -59,7 +59,7 @@ export const TableItemsDetail = ({
     setErrors({})
   }
 
-  const saveEdit = async (rowId: string) => {
+  const saveEdit = async (rowId: string, itemId: string) => {
     const result = rowSchema.safeParse(formData)
 
     if (!result.success) {
@@ -75,7 +75,8 @@ export const TableItemsDetail = ({
     }
 
     const updateItemPromise = updateReceiptItemsById({
-      itemId: rowId,
+      rowReceiptId: rowId,
+      itemId,
       updatedData: formData,
       receiptId
     })
@@ -196,7 +197,10 @@ export const TableItemsDetail = ({
                 <td className="px-4 py-3 flex gap-2">
                   {isEditing ? (
                     <>
-                      <Button size="sm" onClick={() => saveEdit(item.id)}>
+                      <Button
+                        size="sm"
+                        onClick={() => saveEdit(item.id, item.item_id!)}
+                      >
                         <Check className="h-4 w-4" />
                       </Button>
 
