@@ -53,6 +53,7 @@ export async function createReceiptItems({
   if (error) {
     throw handleSupabaseError({ error })
   }
+  revalidatePath(`/inventory/movements/receipts/${items[0].receipt_id}`)
 }
 
 // ========== UPDATE RECEIPT ITEMS BY ID ==========
@@ -73,10 +74,29 @@ export async function updateReceiptItemsById({
     ...updatedData,
     item_id: itemId
   }
-  console.log('🚀 ~ updateReceiptItemsById ~ updateData:', updateData)
   const { error } = await supabase
     .from('receipt_items')
     .update(updateData)
+    .eq('id', rowReceiptId)
+
+  if (error) {
+    throw handleSupabaseError({ error })
+  }
+  revalidatePath(`/inventory/movements/receipts/${receiptId}`)
+}
+
+// ========== DELETE RECEIPT ITEMS BY ID ==========
+export async function deleteReceiptItemsById({
+  rowReceiptId,
+  receiptId
+}: {
+  rowReceiptId: string
+  receiptId: string
+}) {
+  const supabase = await createSupabaseClientSR()
+  const { error } = await supabase
+    .from('receipt_items')
+    .delete()
     .eq('id', rowReceiptId)
 
   if (error) {
