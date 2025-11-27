@@ -252,7 +252,7 @@ export const TableItemsDetail = ({
         shouldValidate: false,
         shouldDirty: false
       })
-    }, [formData.item_id, methods])
+    }, [methods])
 
     return (
       <FormProvider {...methods}>
@@ -260,27 +260,31 @@ export const TableItemsDetail = ({
         <Controller
           name={DUMMY_FIELD_NAME} // Usamos el nombre del campo dummy
           control={methods.control}
-          render={({ field }) => (
-            <SelectDropdown
-              className="min-w-full max-w-full"
-              // RHF pasa el valor a través de field.value
-              value={field.value}
-              // RHF pasa el manejador de cambio a través de field.onChange
-              // Lo envolvemos para actualizar también nuestro estado local 'formData'
-              onValueChange={(value) => {
-                // 1. Actualiza el estado de RHF (para que SelectDropdown muestre el valor)
-                field.onChange(value)
-                // 2. Actualiza nuestro estado local real
-                setFormData((prev) => ({ ...prev, item_id: value }))
-              }}
-              placeholder="Seleccionar ítem"
-              activeFilter={true}
-              options={itemsList.map((il) => ({
-                value: il.id.toString(),
-                label: il.name.toString()
-              }))}
-            />
-          )}
+          render={({ field }) => {
+            return (
+              <SelectDropdown
+                key={field.value}
+                isControlled={true}
+                className="min-w-full max-w-full"
+                // RHF pasa el valor a través de field.value
+                value={field.value}
+                // RHF pasa el manejador de cambio a través de field.onChange
+                // Lo envolvemos para actualizar también nuestro estado local 'formData'
+                onValueChange={(value) => {
+                  // 1. Actualiza el estado de RHF (para que SelectDropdown muestre el valor)
+                  field.onChange(value)
+                  // 2. Actualiza nuestro estado local real
+                  setFormData((prev) => ({ ...prev, item_id: value }))
+                }}
+                placeholder="Seleccionar ítem"
+                activeFilter={true}
+                options={itemsList.map((il) => ({
+                  value: il.id.toString(),
+                  label: il.name.toString()
+                }))}
+              />
+            )
+          }}
         />
       </FormProvider>
     )
