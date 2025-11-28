@@ -102,6 +102,39 @@ export type Database = {
         }
         Relationships: []
       }
+      customers: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          document: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          document?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          document?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       issue_items: {
         Row: {
           created_at: string | null
@@ -334,6 +367,7 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
+          customer_id: string
           description: string | null
           id: string
           status: string | null
@@ -342,6 +376,7 @@ export type Database = {
         Insert: {
           code: string
           created_at?: string | null
+          customer_id: string
           description?: string | null
           id?: string
           status?: string | null
@@ -350,6 +385,7 @@ export type Database = {
         Update: {
           code?: string
           created_at?: string | null
+          customer_id?: string
           description?: string | null
           id?: string
           status?: string | null

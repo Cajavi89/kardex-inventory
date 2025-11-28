@@ -19,6 +19,7 @@ import {
   FaWrench, // Maintenance,
   FaTruck // Suppliers
 } from 'react-icons/fa'
+import { AiFillProduct } from 'react-icons/ai'
 import { MdError } from 'react-icons/md'
 import { IoMdSettings } from 'react-icons/io'
 import { HiOutlineKey } from 'react-icons/hi'
@@ -56,6 +57,11 @@ export const sidebarData: SidebarData = {
           title: 'Dashboard',
           url: '/',
           icon: FaTachometerAlt
+        },
+        {
+          title: 'Clientes',
+          url: '/customers',
+          icon: FaUsers
         },
         {
           title: 'Proveedores',
@@ -97,6 +103,11 @@ export const sidebarData: SidebarData = {
           title: 'Lotes',
           url: '/inventory/batches',
           icon: FaAppStore
+        },
+        {
+          title: 'Producción',
+          url: '/inventory/production',
+          icon: AiFillProduct
         },
         {
           title: 'Movimientos',
